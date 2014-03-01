@@ -38,6 +38,9 @@ include ${TOPDIR}/tools/Config.mk
 include ${TOPDIR}/arch/arm/src/armv7-m/Toolchain.defs
 
 LDSCRIPT = ld.script
+LIBSUPXX = ${shell $(CC) $(CXXFLAGS) --print-file-name=libsupc++.a}
+EXTRA_LIBPATHS = -L "${shell dirname "$(LIBSUPXX)"}"
+EXTRA_LIBS = -lsupc++
 
 ifeq ($(WINTOOL),y)
   # Windows-native toolchains
@@ -45,13 +48,13 @@ ifeq ($(WINTOOL),y)
   DIRUNLINK = $(TOPDIR)/tools/unlink.sh
   MKDEP = $(TOPDIR)/tools/mknulldeps.sh
   ARCHINCLUDES = -I. -isystem "${shell cygpath -w $(TOPDIR)/include}"
-  ARCHXXINCLUDES = -I. -isystem "${shell cygpath -w $(TOPDIR)/include}" -isystem "${shell cygpath -w $(TOPDIR)/include/cxx}"
+  ARCHXXINCLUDES = -I. -isystem "${shell cygpath -w $(TOPDIR)/include}" -isystem "${shell cygpath -w $(TOPDIR)/include/cxx}" -isystem "${shell cygpath -w $(TOPDIR)/include/uClibc++}"
   ARCHSCRIPT = -T "${shell cygpath -w $(TOPDIR)/configs/$(CONFIG_ARCH_BOARD)/scripts/$(LDSCRIPT)}"
 else
   # Linux/Cygwin-native toolchain 
   MKDEP = $(TOPDIR)/tools/mkdeps.sh
   ARCHINCLUDES = -I. -isystem $(TOPDIR)/include
-  ARCHXXINCLUDES = -I. -isystem $(TOPDIR)/include -isystem $(TOPDIR)/include/cxx
+  ARCHXXINCLUDES = -I. -isystem $(TOPDIR)/include -isystem $(TOPDIR)/include/cxx -isystem $(TOPDIR)/include/uClibc++
   ARCHSCRIPT = -T$(TOPDIR)/configs/$(CONFIG_ARCH_BOARD)/scripts/$(LDSCRIPT)
 endif
 
@@ -76,7 +79,11 @@ ifneq ($(CONFIG_DEBUG_NOOPT),y)
 endif
 
 ARCHCFLAGS = -fno-builtin
-ARCHCXXFLAGS = -fno-builtin -fno-exceptions -fno-rtti
+ifeq ($(CONFIG_UCLIBCXX_EXCEPTION),y)
+  ARCHCPUFLAGSXX = -fno-builtin
+else
+  ARCHCPUFLAGSXX = -fno-builtin -fno-exceptions
+endif
 ARCHWARNINGS = -Wall -Wstrict-prototypes -Wshadow
 ARCHWARNINGSXX = -Wall -Wshadow
 ARCHDEFINES =

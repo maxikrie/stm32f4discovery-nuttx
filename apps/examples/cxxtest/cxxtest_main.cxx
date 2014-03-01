@@ -129,7 +129,7 @@ static void test_iostream(void)
   std::cout << "Print an int: "  <<  190  <<  std::endl;
   std::cout <<  "Print a char: "  <<  'd'  <<  std::endl;
 
-#if 0
+#if 1
   int a;
   string s;
 

@@ -59,6 +59,8 @@
 int hello_main(int argc, char *argv[])
 {
   printf("Hello, World!!\n");
+  printf("Test\n");
+  printf("Test me: %.3f\n",11.123);
   return 0;
 }
 

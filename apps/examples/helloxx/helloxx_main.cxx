@@ -161,6 +161,7 @@ extern "C"
     HelloWorld.HelloWorld();
 #endif
 
+    printf("Test me: %f\n",11.1);
     // Exercise an statically constructed C++ object
 
 #ifdef CONFIG_HAVE_CXXINITIALIZE
